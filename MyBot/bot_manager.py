@@ -184,6 +184,7 @@ class BotManager:
         self.grid = Grid()  # grid object!
         self.shared_goal = None  # Track the competitive goal (x, y)
         self.shared_goal_claimed = False  # Track if goal is captured
+        self.grid.manager = self  #tells the grid who owns it
 
 
         
