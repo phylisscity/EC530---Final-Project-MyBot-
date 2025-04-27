@@ -127,3 +127,19 @@ def list_bots():
 
 
 
+@bp.route("/recharge/<bot_id>", methods=["POST"])
+def recharge_bot(bot_id):
+    """
+    Recharge a bot's energy back to full.
+
+    URL Parameter:
+    - bot_id: ID of the bot to recharge
+
+    Returns:
+    - Success message or an error if the bot does not exist
+    """
+    try:
+        manager.recharge_bot(bot_id)
+        return jsonify({"message": f"Bot '{bot_id}' has been recharged to full energy."})
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
