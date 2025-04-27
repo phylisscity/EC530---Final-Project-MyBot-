@@ -111,5 +111,16 @@ def shutdown_bot(bot_id):
         return jsonify({"message": message})
     except ValueError as e:
         return jsonify({"error": str(e)}), 404
+    
+    
+@bp.route("/list", methods=["GET"])
+def list_bots():
+    """
+    Return a list of all active bot IDs.
+
+    Useful for checking which bots are currently active in the system.
+    """
+    return jsonify({"bots": manager.list_bots()})
+
 
 
