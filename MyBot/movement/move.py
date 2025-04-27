@@ -1,6 +1,7 @@
 
 #grid
 from MyBot.config import GRID_WIDTH, GRID_HEIGHT
+from MyBot.world.grid import is_within_bounds  
 
 
 
@@ -32,11 +33,14 @@ class Position:
         else:
             raise ValueError(f"Invalid direction: {direction}")
 
+        
         # Check if new position is still inside grid
-        if not self.is_within_bounds():
+        if not is_within_bounds(self.x, self.y, GRID_WIDTH, GRID_HEIGHT):
             # Undo move and raise error
             self.x, self.y = old_x, old_y
             raise ValueError("Move would go out of bounds.")
+
+
 
 
 
@@ -50,9 +54,3 @@ class Position:
         return f"Position(x={self.x}, y={self.y})"
     
     
-    def is_within_bounds(self):
-        """
-        Check if the current position is within the grid boundaries
-        using constants from config.py.
-        """
-        return 0 <= self.x < GRID_WIDTH and 0 <= self.y < GRID_HEIGHT

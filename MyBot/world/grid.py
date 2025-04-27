@@ -1,4 +1,6 @@
 # Grid-related logic (placeholder for now)
+from MyBot.config import GRID_WIDTH, GRID_HEIGHT
+
 
 def is_within_bounds(x, y, width, height):
     """

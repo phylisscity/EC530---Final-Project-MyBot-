@@ -2,18 +2,21 @@ from MyBot.movement.move import Position
 
 from MyBot.config import MAX_ENERGY
 
+from MyBot.config import DIRECTIONS
+
+from MyBot.config import RECHARGE_COST
 
 import random
 
 
-#random directions
-DIRECTIONS = ["up", "down", "left", "right"]
+"""
+Bot Manager module for MyBot system.
+
+Handles bot creation, movement, energy management, 
+recharging, random movement, and shutdown operations.
+"""
 
 
-
-
-# Cost (in virtual currency) to fully recharge
-RECHARGE_COST = 5
 
 
 class Bot:

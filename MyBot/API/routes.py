@@ -2,6 +2,10 @@
 from flask import Blueprint, request, jsonify
 from MyBot.bot_manager import BotManager
 
+from MyBot.config import DIRECTIONS
+from MyBot.config import RECHARGE_COST
+from MyBot.config import GRID_WIDTH, GRID_HEIGHT
+
 
 
 # Create a Blueprint to organize the API routes separately from the main app
