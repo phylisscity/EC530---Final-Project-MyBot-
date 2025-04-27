@@ -19,7 +19,10 @@ class Position:
 
 
     def move(self, direction):
+        
         """Update the position based on direction input."""
+        old_x, old_y = self.x, self.y  # Save previous coordinates
+
         if direction == "up":
             self.y += 1
         elif direction == "down":
@@ -30,6 +33,12 @@ class Position:
             self.x += 1
         else:
             raise ValueError(f"Invalid direction: {direction}")
+
+        # Check if new position is still inside grid
+        if not self.is_within_bounds():
+            # Undo move and raise error
+            self.x, self.y = old_x, old_y
+            raise ValueError("Move would go out of bounds.")
 
 
 
