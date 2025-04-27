@@ -238,3 +238,17 @@ def reset_bot(bot_id):
         return jsonify({"message": f"Bot '{bot_id}' has been reset."})
     except ValueError as e:
         return jsonify({"error": str(e)}), 404
+
+
+
+#move random
+@bp.route("/move_random/<bot_id>", methods=["POST"])
+def move_random(bot_id):
+    """
+    API endpoint to move a bot randomly in one direction.
+    """
+    try:
+        manager.move_random(bot_id)
+        return jsonify(manager.get_status(bot_id))
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
