@@ -1,5 +1,8 @@
 from MyBot.movement.move import Position
 
+from MyBot.config import MAX_ENERGY
+
+
 import random
 
 
@@ -7,8 +10,6 @@ import random
 DIRECTIONS = ["up", "down", "left", "right"]
 
 
-# Default starting energy for new bots
-MAX_ENERGY = 10
 
 
 # Cost (in virtual currency) to fully recharge
