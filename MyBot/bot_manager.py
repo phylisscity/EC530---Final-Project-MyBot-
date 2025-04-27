@@ -138,6 +138,17 @@ class BotManager:
         Raises an error if the bot does not exist.
         """
         return self._get_bot(bot_id).recharge()
+    
+    
+    
+    def get_energy(self, bot_id):
+        """
+        Return the current energy of the bot.
+
+        Raises an error if the bot is not found.
+        """
+        return self._get_bot(bot_id).energy
+
 
     
     
