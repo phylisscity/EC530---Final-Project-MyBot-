@@ -301,23 +301,21 @@ class BotManager:
         return self.move_bot(bot_id, direction)
     
     
-    def send_message(self, receiver_bot, message):
+    
+    def send_message(self, sender_id, receiver_id, message):
         """
-        Send a message to another bot.
+        Allow one bot to send a message to another bot.
+        """
+        if sender_id not in self.bots:
+            raise ValueError(f"Sender bot '{sender_id}' not found.")
+        if receiver_id not in self.bots:
+            raise ValueError(f"Receiver bot '{receiver_id}' not found.")
 
-        - Adds to sender's outbox
-        - Adds to receiver's inbox
-        """
-        if not isinstance(receiver_bot, Bot):
-            raise ValueError("Receiver must be a valid Bot instance.")
-        
-        formatted_message = f"From {self.bot_id}: {message}"
-        
-        self.outbox.append(formatted_message)
-        receiver_bot.inbox.append(formatted_message)
-        
-        self.log.append(f"[MESSAGE SENT] To '{receiver_bot.bot_id}': {message}")
-        receiver_bot.log.append(f"[MESSAGE RECEIVED] From '{self.bot_id}': {message}")
+        sender = self.bots[sender_id]
+        receiver = self.bots[receiver_id]
+
+        sender.outbox.append({"to": receiver_id, "message": message})
+        receiver.inbox.append({"from": sender_id, "message": message})
 
 
 
