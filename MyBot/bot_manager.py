@@ -24,9 +24,6 @@ class Bot:
         self.balance = 10  # Start each bot with 10 coins
 
 
-
-
-
     def move(self, direction):
         """
         Try to move in the given direction (up/down/left/right).
@@ -48,8 +45,6 @@ class Bot:
             self.log.append(f"[ERROR] {str(e)}")
             raise
 
-        
-        
 
     def status(self):
         """
@@ -71,6 +66,19 @@ class Bot:
         self.balance -= RECHARGE_COST
 
         self.log.append("Recharged to full energy.")
+        
+        
+    def reset(self):
+        """
+        Reset the bot's position to (0,0), full energy, and clear the log.
+        """
+        self.position = Position()
+        self.energy = MAX_ENERGY
+        self.log = []
+
+        
+        
+    
 
 
 
