@@ -2,6 +2,10 @@
 from flask import Blueprint, request, jsonify
 from MyBot.bot_manager import BotManager
 
+from MyBot.config import DIRECTIONS
+from MyBot.config import RECHARGE_COST
+from MyBot.config import GRID_WIDTH, GRID_HEIGHT
+
 
 
 # Create a Blueprint to organize the API routes separately from the main app
@@ -15,7 +19,7 @@ bp = Blueprint("api", __name__)
 manager = BotManager()
 
 
-
+#create bot
 @bp.route("/create", methods=["POST"])
 def create_bot():
     
@@ -46,6 +50,8 @@ def create_bot():
 
 
 
+
+#move bot
 @bp.route("/move/<bot_id>", methods=["POST"])
 def move_bot(bot_id):
     """
@@ -80,6 +86,8 @@ def move_bot(bot_id):
 
 
 
+
+#get bot status
 @bp.route("/status/<bot_id>", methods=["GET"])
 def bot_status(bot_id):
     """
@@ -100,6 +108,9 @@ def bot_status(bot_id):
         return jsonify({"error": str(e)}), 404
     
     
+    
+
+#shutdown bot
 @bp.route("/shutdown/<bot_id>", methods=["DELETE"])
 def shutdown_bot(bot_id):
     
@@ -116,6 +127,8 @@ def shutdown_bot(bot_id):
         return jsonify({"error": str(e)}), 404
     
     
+    
+#list bots
 @bp.route("/list", methods=["GET"])
 def list_bots():
     """
@@ -127,6 +140,7 @@ def list_bots():
 
 
 
+#recharge bots
 @bp.route("/recharge/<bot_id>", methods=["POST"])
 def recharge_bot(bot_id):
     """
@@ -145,6 +159,8 @@ def recharge_bot(bot_id):
         return jsonify({"error": str(e)}), 404
 
 
+
+#check energy
 @bp.route("/energy/<bot_id>", methods=["GET"])
 def check_energy(bot_id):
     """
@@ -165,6 +181,7 @@ def check_energy(bot_id):
 
 
 
+#help menu
 @bp.route("/help", methods=["GET"])
 def help_menu():
     """
@@ -180,3 +197,85 @@ def help_menu():
         "/list (GET)": "List all active bots."
     }
     return jsonify(actions)
+
+
+
+#balance
+@bp.route("/balance/<bot_id>", methods=["GET"])
+def get_balance(bot_id):
+    """
+    API endpoint to retrieve the current coin balance of a bot.
+
+    URL Parameter:
+    - bot_id: ID of the bot to check
+
+    Returns:
+    - JSON with bot_id and balance
+    - Or an error if the bot_id is invalid
+    """
+    try:
+        bot = manager._get_bot(bot_id)
+        return jsonify({
+            "bot_id": bot.bot_id,
+            "balance": bot.balance
+        })
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
+
+
+
+#reset bot
+@bp.route("/reset/<bot_id>", methods=["POST"])
+def reset_bot(bot_id):
+    """
+    API endpoint to reset a bot to initial position, full energy, and empty log.
+
+    URL Parameter:
+    - bot_id: ID of the bot to reset
+
+    Returns:
+    - JSON message confirming reset
+    """
+    try:
+        bot = manager._get_bot(bot_id)
+        bot.reset()
+        return jsonify({"message": f"Bot '{bot_id}' has been reset."})
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
+
+
+
+#move random
+@bp.route("/move_random/<bot_id>", methods=["POST"])
+def move_random(bot_id):
+    """
+    API endpoint to move a bot randomly in one direction.
+    """
+    try:
+        manager.move_random(bot_id)
+        return jsonify(manager.get_status(bot_id))
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+
+
+
+# View current goal
+@bp.route("/goal/<bot_id>", methods=["GET"])
+def get_goal(bot_id):
+    """
+    API endpoint to get the current goal location of a bot.
+
+    URL Parameter:
+    - bot_id: ID of the bot to check
+
+    Returns:
+    - The bot's goal position
+    """
+    try:
+        bot = manager._get_bot(bot_id)
+        return jsonify({
+            "bot_id": bot.bot_id,
+            "goal": bot.goal
+        })
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404

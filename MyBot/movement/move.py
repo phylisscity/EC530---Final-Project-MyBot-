@@ -1,8 +1,7 @@
 
 #grid
-# Constants defining the size of the grid
-GRID_WIDTH = 10
-GRID_HEIGHT = 10
+from MyBot.config import GRID_WIDTH, GRID_HEIGHT
+from MyBot.world.grid import is_within_bounds  
 
 
 
@@ -15,6 +14,7 @@ class Position:
         # Start at given coordinates (default to 0,0)
         self.x = x
         self.y = y
+
 
 
 
@@ -31,11 +31,25 @@ class Position:
             self.x -= 1
         elif direction == "right":
             self.x += 1
+        elif direction == "up-right":
+            self.y += 1
+            self.x += 1
+        elif direction == "up-left":
+            self.y += 1
+            self.x -= 1
+        elif direction == "down-right":
+            self.y -= 1
+            self.x += 1
+        elif direction == "down-left":
+            self.y -= 1
+            self.x -= 1
         else:
             raise ValueError(f"Invalid direction: {direction}")
 
+
         # Check if new position is still inside grid
-        if not self.is_within_bounds():
+        if not is_within_bounds(self.x, self.y, GRID_WIDTH, GRID_HEIGHT):
+            
             # Undo move and raise error
             self.x, self.y = old_x, old_y
             raise ValueError("Move would go out of bounds.")
@@ -52,13 +66,3 @@ class Position:
         return f"Position(x={self.x}, y={self.y})"
     
     
-    def is_within_bounds(self):
-    
-        """
-        Check if the current position is within the grid boundaries. 10x10
-
-        Returns:
-            True if within (0,0) to (GRID_WIDTH-1, GRID_HEIGHT-1), else False.
-        """
-        return 0 <= self.x < GRID_WIDTH and 0 <= self.y < GRID_HEIGHT
-

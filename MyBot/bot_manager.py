@@ -1,12 +1,18 @@
+from MyBot.world.grid import Grid
 from MyBot.movement.move import Position
+from MyBot.config import MAX_ENERGY, DIRECTIONS, RECHARGE_COST, GRID_WIDTH, GRID_HEIGHT
+import random
 
 
-# Default starting energy for new bots
-MAX_ENERGY = 10
+
+"""
+Bot Manager module for MyBot system.
+
+Handles bot creation, movement, energy management, 
+recharging, random movement, and shutdown operations.
+"""
 
 
-# Cost (in virtual currency) to fully recharge
-RECHARGE_COST = 5
 
 
 class Bot:
@@ -14,16 +20,29 @@ class Bot:
     A single bot that can move and remember what it's done.
     """
 
-    def __init__(self, bot_id):
+    def __init__(self, bot_id, grid):
         # Each bot has a name (or ID) and starts at position (0,0)
         self.bot_id = bot_id
         self.position = Position()
         self.log = []  # Keep track of movements (like a mini history)
+        
         #adding energy levels --more features
         self.energy = MAX_ENERGY  # Bots start with 10 moves worth of energy
         self.balance = 10  # Start each bot with 10 coins
-
-
+        self.grid = grid  # Save grid reference
+        
+        
+        # Assign a random goal when bot is created
+        self.goal = self._generate_random_goal()
+        
+        
+    def _generate_random_goal(self):
+        """
+        Pick a random location on the grid as the bot's goal.
+        """
+        x = random.randint(0, GRID_WIDTH - 1)
+        y = random.randint(0, GRID_HEIGHT - 1)
+        return (x, y)
 
 
 
@@ -40,16 +59,33 @@ class Bot:
 
         try:
             self.position.move(direction)
-            self.energy -= 1  # Reduce energy by 1 move
+
+            #diagonal energy loss
+            is_diagonal = "-" in direction
+            if is_diagonal:
+                self.energy -= 2
+            else:
+                self.energy -= 1
+
             coords = self.position.get_coords()
+
+            if self.grid.is_charging_station(coords[0], coords[1]):
+                self.energy = MAX_ENERGY
+                self.log.append(f"[RECHARGED] Recharged automatically at station {coords}.")
+
+            if coords == self.goal:
+                self.log.append(f"[GOAL] Reached target at {self.goal}!")
+
             self.log.append(f"Moved {direction} to {coords}. Energy left: {self.energy}")
             return coords
+
         except ValueError as e:
             self.log.append(f"[ERROR] {str(e)}")
             raise
 
-        
-        
+
+
+
 
     def status(self):
         """
@@ -71,6 +107,19 @@ class Bot:
         self.balance -= RECHARGE_COST
 
         self.log.append("Recharged to full energy.")
+        
+        
+    def reset(self):
+        """
+        Reset the bot's position to (0,0), full energy, and clear the log.
+        """
+        self.position = Position()
+        self.energy = MAX_ENERGY
+        self.log = []
+
+        
+        
+    
 
 
 
@@ -83,6 +132,8 @@ class BotManager:
     def __init__(self):
         # Store all bots in a dictionary with their ID as the key
         self.bots = {}
+        self.grid = Grid()  # grid object!
+
         
 
 
@@ -91,9 +142,10 @@ class BotManager:
         Make a new bot with a unique ID.
         If the ID already exists, show an error.
         """
+        
         if bot_id in self.bots:
             raise ValueError(f"Bot '{bot_id}' already exists.")
-        self.bots[bot_id] = Bot(bot_id)
+        self.bots[bot_id] = Bot(bot_id, self.grid)  # pass grid to bots!
         return f"Bot '{bot_id}' created."
 
 
@@ -158,6 +210,16 @@ class BotManager:
         Raises an error if the bot is not found.
         """
         return self._get_bot(bot_id).energy
+    
+    
+    
+    def move_random(self, bot_id):
+        """
+        Move the bot in a random valid direction.
+        """
+        direction = random.choice(DIRECTIONS)
+        return self.move_bot(bot_id, direction)
+
 
 
     
