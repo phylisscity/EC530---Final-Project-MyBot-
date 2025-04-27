@@ -1,6 +1,6 @@
 # Import Flask and the API Blueprint
 from flask import Flask
-from MyBot.API.routes import bp  # Use capital API to match your folder
+from MyBot.API.routes import bp  
 
 
 def create_app():
