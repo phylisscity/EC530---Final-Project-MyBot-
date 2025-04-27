@@ -256,3 +256,26 @@ def move_random(bot_id):
         return jsonify(manager.get_status(bot_id))
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
+
+
+
+# View current goal
+@bp.route("/goal/<bot_id>", methods=["GET"])
+def get_goal(bot_id):
+    """
+    API endpoint to get the current goal location of a bot.
+
+    URL Parameter:
+    - bot_id: ID of the bot to check
+
+    Returns:
+    - The bot's goal position
+    """
+    try:
+        bot = manager._get_bot(bot_id)
+        return jsonify({
+            "bot_id": bot.bot_id,
+            "goal": bot.goal
+        })
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
