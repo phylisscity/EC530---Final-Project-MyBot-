@@ -309,3 +309,23 @@ def get_shared_goal():
         return jsonify({"shared_goal": manager.shared_goal})
     else:
         return jsonify({"message": "No active shared goal."})
+
+
+#messaging
+@bp.route("/send_message/<sender_id>/<receiver_id>", methods=["POST"])
+def send_message(sender_id, receiver_id):
+    """
+    API endpoint to send a message from one bot to another.
+    Body must contain { "message": "your message" }.
+    """
+    data = request.json
+    message = data.get("message")
+    
+    if not message:
+        return jsonify({"error": "Missing message"}), 400
+
+    try:
+        result = manager.send_message(sender_id, receiver_id, message)
+        return jsonify({"message": result})
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
