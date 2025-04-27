@@ -1,4 +1,11 @@
 
+#grid
+# Constants defining the size of the grid
+GRID_WIDTH = 10
+GRID_HEIGHT = 10
+
+
+
 class Position:
     """Tracks and updates the x, y position of a bot on a grid."""
 
