@@ -335,3 +335,32 @@ def send_message(sender_id, receiver_id):
 
     except ValueError as e:
         return jsonify({"error": str(e)}), 400
+
+
+
+
+# inbox
+@bp.route("/inbox/<bot_id>", methods=["GET"])
+def get_inbox(bot_id):
+    """
+    API endpoint to get a bot's inbox (received messages).
+    """
+    try:
+        inbox = manager.get_inbox(bot_id)
+        return jsonify({"bot_id": bot_id, "inbox": inbox})
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
+
+
+
+# outbox
+@bp.route("/outbox/<bot_id>", methods=["GET"])
+def get_outbox(bot_id):
+    """
+    API endpoint to get a bot's outbox (sent messages).
+    """
+    try:
+        outbox = manager.get_outbox(bot_id)
+        return jsonify({"bot_id": bot_id, "outbox": outbox})
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
