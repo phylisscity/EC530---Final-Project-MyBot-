@@ -1,8 +1,6 @@
 
 #grid
-# Constants defining the size of the grid
-GRID_WIDTH = 10
-GRID_HEIGHT = 10
+from MyBot.config import GRID_WIDTH, GRID_HEIGHT
 
 
 
@@ -53,12 +51,8 @@ class Position:
     
     
     def is_within_bounds(self):
-    
         """
-        Check if the current position is within the grid boundaries. 10x10
-
-        Returns:
-            True if within (0,0) to (GRID_WIDTH-1, GRID_HEIGHT-1), else False.
+        Check if the current position is within the grid boundaries
+        using constants from config.py.
         """
         return 0 <= self.x < GRID_WIDTH and 0 <= self.y < GRID_HEIGHT
-
