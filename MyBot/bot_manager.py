@@ -32,9 +32,12 @@ class Bot:
         self.bot_id = bot_id
         self.position = Position()
         self.log = []  # Keep track of movements (like a mini history)
+        
         #adding energy levels --more features
         self.energy = MAX_ENERGY  # Bots start with 10 moves worth of energy
         self.balance = 10  # Start each bot with 10 coins
+        self.grid = grid  # Save grid reference
+
 
 
     def move(self, direction):
