@@ -66,27 +66,30 @@ class Bot:
 
         try:
             self.position.move(direction)
-            self.energy -= 1  # Reduce energy by 1 move
+
+            #diagonal energy loss
+            is_diagonal = "-" in direction
+            if is_diagonal:
+                self.energy -= 2
+            else:
+                self.energy -= 1
+
             coords = self.position.get_coords()
-            
-            
-            #Check if landed on a charging station
+
             if self.grid.is_charging_station(coords[0], coords[1]):
                 self.energy = MAX_ENERGY
                 self.log.append(f"[RECHARGED] Recharged automatically at station {coords}.")
 
-            # 🌟 Check if bot reached its goal
             if coords == self.goal:
                 self.log.append(f"[GOAL] Reached target at {self.goal}!")
-                
-            # Log movement (whether or not it recharged / reached goal)
+
             self.log.append(f"Moved {direction} to {coords}. Energy left: {self.energy}")
             return coords
 
-        
         except ValueError as e:
             self.log.append(f"[ERROR] {str(e)}")
             raise
+
 
 
 
