@@ -1,15 +1,8 @@
-from MyBot.movement.move import Position
-
-from MyBot.config import MAX_ENERGY
-
-from MyBot.config import DIRECTIONS
-
-from MyBot.config import RECHARGE_COST
-
 from MyBot.world.grid import Grid
-
-
+from MyBot.movement.move import Position
+from MyBot.config import MAX_ENERGY, DIRECTIONS, RECHARGE_COST, GRID_WIDTH, GRID_HEIGHT
 import random
+
 
 
 """
@@ -27,7 +20,7 @@ class Bot:
     A single bot that can move and remember what it's done.
     """
 
-    def __init__(self, bot_id):
+    def __init__(self, bot_id, grid):
         # Each bot has a name (or ID) and starts at position (0,0)
         self.bot_id = bot_id
         self.position = Position()
