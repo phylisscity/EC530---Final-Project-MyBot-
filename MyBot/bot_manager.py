@@ -1,5 +1,11 @@
 from MyBot.movement.move import Position
 
+import random
+
+
+#random directions
+DIRECTIONS = ["up", "down", "left", "right"]
+
 
 # Default starting energy for new bots
 MAX_ENERGY = 10
@@ -166,6 +172,16 @@ class BotManager:
         Raises an error if the bot is not found.
         """
         return self._get_bot(bot_id).energy
+    
+    
+    
+    def move_random(self, bot_id):
+        """
+        Move the bot in a random valid direction.
+        """
+        direction = random.choice(DIRECTIONS)
+        return self.move_bot(bot_id, direction)
+
 
 
     
