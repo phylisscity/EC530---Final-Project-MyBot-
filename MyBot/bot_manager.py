@@ -1,5 +1,9 @@
 from MyBot.movement.move import Position
 
+
+# Default starting energy for new bots
+MAX_ENERGY = 10
+
 class Bot:
     """
     A single bot that can move and remember what it's done.
@@ -59,7 +63,7 @@ class BotManager:
         self.bots = {}
         
         #adding energy levels --more features
-        self.energy = 10  # Bots start with 10 moves worth of energy
+        self.energy = MAX_ENERGY  # Bots start with 10 moves worth of energy
 
 
 
