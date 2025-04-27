@@ -131,4 +131,13 @@ class BotManager:
         return self.bots[bot_id]
     
     
+    def recharge_bot(self, bot_id):
+        """
+        Recharges a bot's energy to full.
+
+        Raises an error if the bot does not exist.
+        """
+        return self._get_bot(bot_id).recharge()
+
+    
     
