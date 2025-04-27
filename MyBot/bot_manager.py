@@ -26,6 +26,8 @@ class Bot:
         self.position = Position()
         self.log = []  # Keep track of movements (like a mini history)
         
+        self.inbox = []  # NEW: Bots can now receive messages!
+
         #adding energy levels --more features
         self.energy = MAX_ENERGY  # Bots start with 10 moves worth of energy
         self.balance = 10  # Start each bot with 10 coins
@@ -165,6 +167,16 @@ class Bot:
         self.position = Position()
         self.energy = MAX_ENERGY
         self.log = []
+        
+        
+        
+    def receive_message(self, from_bot, message):
+        """
+        Receive a message from another bot and store it in inbox.
+        """
+        entry = f"[FROM {from_bot}] {message}"
+        self.inbox.append(entry)
+        self.log.append(entry)  # Also log it for status view
 
         
         
@@ -284,6 +296,18 @@ class BotManager:
         """
         direction = random.choice(DIRECTIONS)
         return self.move_bot(bot_id, direction)
+    
+    
+    
+    def send_message(self, sender_id, receiver_id, message):
+        """
+        Send a message from one bot to another.
+        """
+        sender = self._get_bot(sender_id)
+        receiver = self._get_bot(receiver_id)
+        
+        receiver.receive_message(sender.bot_id, message)
+        return f"Message sent from '{sender_id}' to '{receiver_id}'."
     
     
 
