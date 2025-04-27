@@ -74,8 +74,6 @@ class BotManager:
         Return position + log for the selected bot.
         """
         return self._get_bot(bot_id).status()
-<<<<<<< Updated upstream
-=======
     
     
     def shutdown_bot(self, bot_id):
@@ -89,7 +87,14 @@ class BotManager:
             raise ValueError(f"Bot '{bot_id}' not found.")
         del self.bots[bot_id]
         return f"Bot '{bot_id}' has been shut down."
->>>>>>> Stashed changes
+    
+    
+    def list_bots(self):
+        """
+        Return a list of all active bot IDs.
+        """
+        return list(self.bots.keys())
+
 
 
     def _get_bot(self, bot_id):
@@ -99,9 +104,6 @@ class BotManager:
         if bot_id not in self.bots:
             raise ValueError(f"Bot '{bot_id}' not found.")
         return self.bots[bot_id]
-<<<<<<< Updated upstream
-=======
     
     
     
->>>>>>> Stashed changes
