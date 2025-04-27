@@ -5,6 +5,7 @@ from MyBot.bot_manager import BotManager
 from MyBot.config import DIRECTIONS
 from MyBot.config import RECHARGE_COST
 from MyBot.config import GRID_WIDTH, GRID_HEIGHT
+import random
 
 
 
@@ -279,3 +280,32 @@ def get_goal(bot_id):
         })
     except ValueError as e:
         return jsonify({"error": str(e)}), 404
+
+
+
+
+#create shared goal
+@bp.route("/create_shared_goal", methods=["POST"])
+def create_shared_goal():
+    """
+    Set a new shared competitive goal for all bots to race toward.
+    """
+    manager.shared_goal = (
+        random.randint(0, GRID_WIDTH - 1),
+        random.randint(0, GRID_HEIGHT - 1)
+    )
+    manager.shared_goal_claimed = False
+    return jsonify({"shared_goal": manager.shared_goal})
+
+
+
+#get/view shared goal
+@bp.route("/shared_goal", methods=["GET"])
+def get_shared_goal():
+    """
+    Get the current shared competitive goal.
+    """
+    if manager.shared_goal and not manager.shared_goal_claimed:
+        return jsonify({"shared_goal": manager.shared_goal})
+    else:
+        return jsonify({"message": "No active shared goal."})
