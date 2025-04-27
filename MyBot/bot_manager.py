@@ -6,6 +6,9 @@ from MyBot.config import DIRECTIONS
 
 from MyBot.config import RECHARGE_COST
 
+from MyBot.world.grid import Grid
+
+
 import random
 
 
@@ -101,6 +104,8 @@ class BotManager:
     def __init__(self):
         # Store all bots in a dictionary with their ID as the key
         self.bots = {}
+        self.grid = Grid()  # grid object!
+
         
 
 
@@ -109,9 +114,10 @@ class BotManager:
         Make a new bot with a unique ID.
         If the ID already exists, show an error.
         """
+        
         if bot_id in self.bots:
             raise ValueError(f"Bot '{bot_id}' already exists.")
-        self.bots[bot_id] = Bot(bot_id)
+        self.bots[bot_id] = Bot(bot_id, self.grid)  # pass grid to bots!
         return f"Bot '{bot_id}' created."
 
 
