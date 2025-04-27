@@ -15,7 +15,7 @@ bp = Blueprint("api", __name__)
 manager = BotManager()
 
 
-
+#create bot
 @bp.route("/create", methods=["POST"])
 def create_bot():
     
@@ -46,6 +46,8 @@ def create_bot():
 
 
 
+
+#move bot
 @bp.route("/move/<bot_id>", methods=["POST"])
 def move_bot(bot_id):
     """
@@ -80,6 +82,8 @@ def move_bot(bot_id):
 
 
 
+
+#get bot status
 @bp.route("/status/<bot_id>", methods=["GET"])
 def bot_status(bot_id):
     """
@@ -100,6 +104,9 @@ def bot_status(bot_id):
         return jsonify({"error": str(e)}), 404
     
     
+    
+
+#shutdown bot
 @bp.route("/shutdown/<bot_id>", methods=["DELETE"])
 def shutdown_bot(bot_id):
     
@@ -116,6 +123,8 @@ def shutdown_bot(bot_id):
         return jsonify({"error": str(e)}), 404
     
     
+    
+#list bots
 @bp.route("/list", methods=["GET"])
 def list_bots():
     """
@@ -127,6 +136,7 @@ def list_bots():
 
 
 
+#recharge bots
 @bp.route("/recharge/<bot_id>", methods=["POST"])
 def recharge_bot(bot_id):
     """
@@ -145,6 +155,8 @@ def recharge_bot(bot_id):
         return jsonify({"error": str(e)}), 404
 
 
+
+#check energy
 @bp.route("/energy/<bot_id>", methods=["GET"])
 def check_energy(bot_id):
     """
@@ -165,6 +177,7 @@ def check_energy(bot_id):
 
 
 
+#help menu
 @bp.route("/help", methods=["GET"])
 def help_menu():
     """
@@ -180,3 +193,27 @@ def help_menu():
         "/list (GET)": "List all active bots."
     }
     return jsonify(actions)
+
+
+
+#balance
+@bp.route("/balance/<bot_id>", methods=["GET"])
+def get_balance(bot_id):
+    """
+    API endpoint to retrieve the current coin balance of a bot.
+
+    URL Parameter:
+    - bot_id: ID of the bot to check
+
+    Returns:
+    - JSON with bot_id and balance
+    - Or an error if the bot_id is invalid
+    """
+    try:
+        bot = manager._get_bot(bot_id)
+        return jsonify({
+            "bot_id": bot.bot_id,
+            "balance": bot.balance
+        })
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
