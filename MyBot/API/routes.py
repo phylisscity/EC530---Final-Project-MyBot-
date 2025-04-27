@@ -75,7 +75,7 @@ def move_bot(bot_id):
         return jsonify(manager.get_status(bot_id))
     
     except ValueError as e:
-        # If bot is out of energy or not found, handle it nicely
+        # Handle cases like invalid direction, out of bounds, or no energy left
         return jsonify({"error": str(e)}), 400
 
 
