@@ -95,3 +95,21 @@ def bot_status(bot_id):
     except ValueError as e:
         # Handle case where bot_id is not found
         return jsonify({"error": str(e)}), 404
+    
+    
+@bp.route("/shutdown/<bot_id>", methods=["DELETE"])
+def shutdown_bot(bot_id):
+    
+    """
+    Remove a bot from the system.
+
+    Deletes the specified bot and returns a confirmation message.
+    If the bot does not exist, returns an error.
+    """
+    try:
+        message = manager.shutdown_bot(bot_id)
+        return jsonify({"message": message})
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
+
+
