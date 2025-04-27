@@ -162,3 +162,21 @@ def check_energy(bot_id):
         return jsonify({"bot_id": bot_id, "energy": energy})
     except ValueError as e:
         return jsonify({"error": str(e)}), 404
+
+
+
+@bp.route("/help", methods=["GET"])
+def help_menu():
+    """
+    API endpoint to list all available bot actions and their descriptions.
+    """
+    actions = {
+        "/create (POST)": "Create a new bot. Requires { 'bot_id': 'your_bot_id' } in body.",
+        "/move/<bot_id> (POST)": "Move the bot in a direction (up/down/left/right). Body: { 'direction': '...' }",
+        "/status/<bot_id> (GET)": "Get the bot's current position, recent moves, and energy status.",
+        "/energy/<bot_id> (GET)": "Get the bot's current energy level.",
+        "/recharge/<bot_id> (POST)": "Recharge the bot's energy back to full (costs coins).",
+        "/shutdown/<bot_id> (DELETE)": "Shutdown (delete) a bot.",
+        "/list (GET)": "List all active bots."
+    }
+    return jsonify(actions)
