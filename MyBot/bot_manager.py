@@ -37,6 +37,19 @@ class Bot:
         self.energy = MAX_ENERGY  # Bots start with 10 moves worth of energy
         self.balance = 10  # Start each bot with 10 coins
         self.grid = grid  # Save grid reference
+        
+        
+        # Assign a random goal when bot is created
+        self.goal = self._generate_random_goal()
+        
+        
+    def _generate_random_goal(self):
+        """
+        Pick a random location on the grid as the bot's goal.
+        """
+        x = random.randint(0, GRID_WIDTH - 1)
+        y = random.randint(0, GRID_HEIGHT - 1)
+        return (x, y)
 
 
 
@@ -62,9 +75,14 @@ class Bot:
                 self.energy = MAX_ENERGY
                 self.log.append(f"[RECHARGED] Recharged automatically at station {coords}.")
 
-            
+            # 🌟 Check if bot reached its goal
+            if coords == self.goal:
+                self.log.append(f"[GOAL] Reached target at {self.goal}!")
+                
+            # Log movement (whether or not it recharged / reached goal)
             self.log.append(f"Moved {direction} to {coords}. Energy left: {self.energy}")
             return coords
+
         
         except ValueError as e:
             self.log.append(f"[ERROR] {str(e)}")
