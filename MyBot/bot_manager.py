@@ -321,5 +321,17 @@ class BotManager:
 
 
 
+    def get_inbox(self, bot_id):
+        """
+        Return the list of messages received by a bot.
+        """
+        return self._get_bot(bot_id).inbox
+
+    def get_outbox(self, bot_id):
+        """
+        Return the list of messages sent by a bot.
+        """
+        return self._get_bot(bot_id).outbox
+
     
     
