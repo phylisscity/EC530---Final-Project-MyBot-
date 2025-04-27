@@ -217,3 +217,24 @@ def get_balance(bot_id):
         })
     except ValueError as e:
         return jsonify({"error": str(e)}), 404
+
+
+
+#reset bot
+@bp.route("/reset/<bot_id>", methods=["POST"])
+def reset_bot(bot_id):
+    """
+    API endpoint to reset a bot to initial position, full energy, and empty log.
+
+    URL Parameter:
+    - bot_id: ID of the bot to reset
+
+    Returns:
+    - JSON message confirming reset
+    """
+    try:
+        bot = manager._get_bot(bot_id)
+        bot.reset()
+        return jsonify({"message": f"Bot '{bot_id}' has been reset."})
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
