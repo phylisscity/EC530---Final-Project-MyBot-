@@ -110,6 +110,18 @@ class Bot:
             #Step 8: Check if goal is reached
             if coords == self.goal:
                 self.log.append(f"[GOAL] Reached target at {self.goal}!")
+                
+            
+            #Step 8.5: Check if bot captures the shared goal
+            if (
+                self.grid.manager.shared_goal and
+                not self.grid.manager.shared_goal_claimed and
+                coords == self.grid.manager.shared_goal
+            ):
+                self.grid.manager.shared_goal_claimed = True
+                self.balance += 5  # Bonus for capturing shared goal
+                self.log.append(f"[COMPETITION] Captured the shared goal at {coords}! +5 coins awarded.")
+
 
             #Step 9: Log the successful move
             self.log.append(f"Moved {direction} to {coords}. Energy left: {self.energy}")
