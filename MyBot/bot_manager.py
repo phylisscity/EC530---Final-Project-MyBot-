@@ -18,14 +18,22 @@ class Bot:
         Try to move in the given direction (up/down/left/right).
         If direction is invalid, log the error.
         """
+        #incorporating energy feature
+        
+        if self.energy <= 0:
+            self.log.append("[ERROR] Not enough energy to move.")
+            raise ValueError("Bot is out of energy and cannot move.")
+
         try:
             self.position.move(direction)
+            self.energy -= 1  # Reduce energy by 1 move
             coords = self.position.get_coords()
-            self.log.append(f"Moved {direction} to {coords}")
+            self.log.append(f"Moved {direction} to {coords}. Energy left: {self.energy}")
             return coords
         except ValueError as e:
             self.log.append(f"[ERROR] {str(e)}")
             raise
+
         
         
 
