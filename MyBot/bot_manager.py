@@ -46,40 +46,77 @@ class Bot:
 
 
 
+    #complete revamp for multiplayer
     def move(self, direction):
-        """
-        Try to move in the given direction (up/down/left/right).
-        If direction is invalid, log the error.
-        """
-        #incorporating energy feature
         
+        """
+        Try to move in the given direction.
+        Predict the move first: check for energy, collisions with other bots, and grid boundaries.
+        Only execute move if it is safe.
+        """
+
+        #Step 1: Check if bot has enough energy
         if self.energy <= 0:
             self.log.append("[ERROR] Not enough energy to move.")
             raise ValueError("Bot is out of energy and cannot move.")
 
+        #Step 2: Save the current position (in case we need to rollback or predict)
+        old_x, old_y = self.position.x, self.position.y
+
+        #Step 3: Predict the next position without actually moving yet
+        if direction == "up":
+            new_x, new_y = old_x, old_y + 1
+        elif direction == "down":
+            new_x, new_y = old_x, old_y - 1
+        elif direction == "left":
+            new_x, new_y = old_x - 1, old_y
+        elif direction == "right":
+            new_x, new_y = old_x + 1, old_y
+        elif direction == "up-right":
+            new_x, new_y = old_x + 1, old_y + 1
+        elif direction == "up-left":
+            new_x, new_y = old_x - 1, old_y + 1
+        elif direction == "down-right":
+            new_x, new_y = old_x + 1, old_y - 1
+        elif direction == "down-left":
+            new_x, new_y = old_x - 1, old_y - 1
+        else:
+            self.log.append("[ERROR] Invalid direction.")
+            raise ValueError(f"Invalid direction: {direction}")
+
+        #Step 4: Check if the new position is already occupied by another bot
+        if self.grid.manager.is_position_occupied(new_x, new_y):
+            self.log.append(f"[ERROR] Move blocked: another bot is at ({new_x}, {new_y}).")
+            raise ValueError("Cannot move: another bot is already at that location.")
+
+        #Step 5: Actually perform the move using the Position class
         try:
+            # move.py will handle out-of-bounds rollback automatically if needed
             self.position.move(direction)
 
-            #diagonal energy loss
-            is_diagonal = "-" in direction
-            if is_diagonal:
+            #Step 6: Update energy cost (diagonal moves cost 2, straight moves cost 1)
+            if "-" in direction:
                 self.energy -= 2
             else:
                 self.energy -= 1
 
             coords = self.position.get_coords()
 
+            #Step 7: Recharge if landing on a charging station
             if self.grid.is_charging_station(coords[0], coords[1]):
                 self.energy = MAX_ENERGY
                 self.log.append(f"[RECHARGED] Recharged automatically at station {coords}.")
 
+            #Step 8: Check if goal is reached
             if coords == self.goal:
                 self.log.append(f"[GOAL] Reached target at {self.goal}!")
 
+            #Step 9: Log the successful move
             self.log.append(f"Moved {direction} to {coords}. Energy left: {self.energy}")
             return coords
 
         except ValueError as e:
+            #If move.py raised a ValueError (out of bounds, etc), log it too
             self.log.append(f"[ERROR] {str(e)}")
             raise
 
@@ -193,6 +230,18 @@ class BotManager:
         return self.bots[bot_id]
     
     
+    
+    def is_position_occupied(self, x, y):
+        """
+        Check if any bot is currently at (x, y).
+        """
+        for bot in self.bots.values():
+            if bot.position.x == x and bot.position.y == y:
+                return True
+        return False
+    
+    
+
     def recharge_bot(self, bot_id):
         """
         Recharges a bot's energy to full.
@@ -221,15 +270,6 @@ class BotManager:
         return self.move_bot(bot_id, direction)
     
     
-    def is_position_occupied(self, x, y):
-        """
-        Check if any bot is currently at (x, y).
-        """
-        for bot in self.bots.values():
-            if bot.position.x == x and bot.position.y == y:
-                return True
-        return False
-
 
 
 
