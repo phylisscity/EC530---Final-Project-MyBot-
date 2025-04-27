@@ -55,11 +55,22 @@ class Bot:
             self.position.move(direction)
             self.energy -= 1  # Reduce energy by 1 move
             coords = self.position.get_coords()
+            
+            
+            #Check if landed on a charging station
+            if self.grid.is_charging_station(coords[0], coords[1]):
+                self.energy = MAX_ENERGY
+                self.log.append(f"[RECHARGED] Recharged automatically at station {coords}.")
+
+            
             self.log.append(f"Moved {direction} to {coords}. Energy left: {self.energy}")
             return coords
+        
         except ValueError as e:
             self.log.append(f"[ERROR] {str(e)}")
             raise
+
+
 
 
     def status(self):
