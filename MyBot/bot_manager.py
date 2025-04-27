@@ -4,6 +4,11 @@ from MyBot.movement.move import Position
 # Default starting energy for new bots
 MAX_ENERGY = 10
 
+
+# Cost (in virtual currency) to fully recharge
+RECHARGE_COST = 5
+
+
 class Bot:
     """
     A single bot that can move and remember what it's done.
@@ -16,6 +21,8 @@ class Bot:
         self.log = []  # Keep track of movements (like a mini history)
         #adding energy levels --more features
         self.energy = MAX_ENERGY  # Bots start with 10 moves worth of energy
+        self.balance = 10  # Start each bot with 10 coins
+
 
 
 
@@ -60,6 +67,9 @@ class Bot:
         Refill the bot's energy back to maximum.
         """
         self.energy = MAX_ENERGY
+                
+        self.balance -= RECHARGE_COST
+
         self.log.append("Recharged to full energy.")
 
 
