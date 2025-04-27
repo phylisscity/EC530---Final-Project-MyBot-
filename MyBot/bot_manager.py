@@ -26,7 +26,10 @@ class Bot:
         self.position = Position()
         self.log = []  # Keep track of movements (like a mini history)
         
-        self.inbox = []  # NEW: Bots can now receive messages!
+
+        self.inbox = []   # List of received messages   
+        self.outbox = []  # List of sent messages
+
 
         #adding energy levels --more features
         self.energy = MAX_ENERGY  # Bots start with 10 moves worth of energy
@@ -298,18 +301,23 @@ class BotManager:
         return self.move_bot(bot_id, direction)
     
     
-    
-    def send_message(self, sender_id, receiver_id, message):
+    def send_message(self, receiver_bot, message):
         """
-        Send a message from one bot to another.
+        Send a message to another bot.
+
+        - Adds to sender's outbox
+        - Adds to receiver's inbox
         """
-        sender = self._get_bot(sender_id)
-        receiver = self._get_bot(receiver_id)
+        if not isinstance(receiver_bot, Bot):
+            raise ValueError("Receiver must be a valid Bot instance.")
         
-        receiver.receive_message(sender.bot_id, message)
-        return f"Message sent from '{sender_id}' to '{receiver_id}'."
-    
-    
+        formatted_message = f"From {self.bot_id}: {message}"
+        
+        self.outbox.append(formatted_message)
+        receiver_bot.inbox.append(formatted_message)
+        
+        self.log.append(f"[MESSAGE SENT] To '{receiver_bot.bot_id}': {message}")
+        receiver_bot.log.append(f"[MESSAGE RECEIVED] From '{self.bot_id}': {message}")
 
 
 
