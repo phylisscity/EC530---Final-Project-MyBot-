@@ -49,6 +49,10 @@ class BotManager:
     def __init__(self):
         # Store all bots in a dictionary with their ID as the key
         self.bots = {}
+        
+        #adding energy levels --more features
+        self.energy = 10  # Bots start with 10 moves worth of energy
+
 
 
     def create_bot(self, bot_id):
