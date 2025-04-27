@@ -219,6 +219,17 @@ class BotManager:
         """
         direction = random.choice(DIRECTIONS)
         return self.move_bot(bot_id, direction)
+    
+    
+    def is_position_occupied(self, x, y):
+        """
+        Check if any bot is currently at (x, y).
+        """
+        for bot in self.bots.values():
+            if bot.position.x == x and bot.position.y == y:
+                return True
+        return False
+
 
 
 
