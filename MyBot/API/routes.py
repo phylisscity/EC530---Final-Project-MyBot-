@@ -71,10 +71,13 @@ def move_bot(bot_id):
     try:
         # Move the bot and return updated status
         manager.move_bot(bot_id, direction)
+        
         return jsonify(manager.get_status(bot_id))
+    
     except ValueError as e:
-        # Handle cases where bot_id is not found or invalid move
-        return jsonify({"error": str(e)}), 404
+        # If bot is out of energy or not found, handle it nicely
+        return jsonify({"error": str(e)}), 400
+
 
 
 @bp.route("/status/<bot_id>", methods=["GET"])
