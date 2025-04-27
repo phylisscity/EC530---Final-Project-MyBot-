@@ -143,3 +143,22 @@ def recharge_bot(bot_id):
         return jsonify({"message": f"Bot '{bot_id}' has been recharged to full energy."})
     except ValueError as e:
         return jsonify({"error": str(e)}), 404
+
+
+@bp.route("/energy/<bot_id>", methods=["GET"])
+def check_energy(bot_id):
+    """
+    API endpoint to get the current energy of a bot.
+
+    URL Parameter:
+    - bot_id: ID of the bot to check
+
+    Returns:
+    - Current energy level
+    - Or error if bot doesn't exist
+    """
+    try:
+        energy = manager.get_energy(bot_id)
+        return jsonify({"bot_id": bot_id, "energy": energy})
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
