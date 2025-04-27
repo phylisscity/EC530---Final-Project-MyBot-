@@ -41,3 +41,15 @@ class Position:
 
     def __repr__(self):
         return f"Position(x={self.x}, y={self.y})"
+    
+    
+    def is_within_bounds(self):
+    
+        """
+        Check if the current position is within the grid boundaries. 10x10
+
+        Returns:
+            True if within (0,0) to (GRID_WIDTH-1, GRID_HEIGHT-1), else False.
+        """
+        return 0 <= self.x < GRID_WIDTH and 0 <= self.y < GRID_HEIGHT
+
