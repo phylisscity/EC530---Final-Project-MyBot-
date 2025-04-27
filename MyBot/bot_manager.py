@@ -53,6 +53,15 @@ class Bot:
             "position": self.position.get_coords(),
             "log": self.log[-5:]  # Only show the last 5 things
         }
+        
+        
+    def recharge(self):
+        """
+        Refill the bot's energy back to maximum.
+        """
+        self.energy = MAX_ENERGY
+        self.log.append("Recharged to full energy.")
+
 
 
 class BotManager:
