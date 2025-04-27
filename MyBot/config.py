@@ -15,7 +15,7 @@ GRID_HEIGHT = 10
 MAX_ENERGY = 10
 
 # Possible directions for bot movement
-DIRECTIONS = ["up", "down", "left", "right"]
+DIRECTIONS = ["up", "down", "left", "right", "up-right", "up-left", "down-right", "down-left"]
 
 # Cost (in virtual currency) to fully recharge a bot
 RECHARGE_COST = 5
