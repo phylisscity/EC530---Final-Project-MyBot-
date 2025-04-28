@@ -201,10 +201,10 @@ class BotManager:
     Handles create, move, and status requests.
     """
 
-    def __init__(self):
+    def __init__(self, width=0, height=0, num_stations=5):
         # Store all bots in a dictionary with their ID as the key
         self.bots = {}
-        self.grid = Grid()  # grid object!
+        self.grid = Grid(width, height, num_stations)  # grid object!
         self.shared_goal = None  # Track the competitive goal (x, y)
         self.shared_goal_claimed = False  # Track if goal is captured
         self.grid.manager = self  #tells the grid who owns it
