@@ -2,6 +2,11 @@ from MyBot.world.grid import Grid
 from MyBot.movement.move import Position
 from MyBot.config import MAX_ENERGY, DIRECTIONS, RECHARGE_COST, GRID_WIDTH, GRID_HEIGHT
 import random
+import openai
+from MyBot.config import OPENAI_API_KEY
+
+
+openai.api_key = OPENAI_API_KEY
 
 
 
@@ -26,6 +31,14 @@ class Bot:
         self.position = Position()
         self.log = []  # Keep track of movements (like a mini history)
         
+
+        self.inbox = []   # List of received messages   
+        self.outbox = []  # List of sent messages
+        
+        self.auto_reply = False  # default: bots don't auto-reply unless told to
+
+
+
         #adding energy levels --more features
         self.energy = MAX_ENERGY  # Bots start with 10 moves worth of energy
         self.balance = 10  # Start each bot with 10 coins
@@ -46,40 +59,89 @@ class Bot:
 
 
 
+    #complete revamp for multiplayer
     def move(self, direction):
-        """
-        Try to move in the given direction (up/down/left/right).
-        If direction is invalid, log the error.
-        """
-        #incorporating energy feature
         
+        """
+        Try to move in the given direction.
+        Predict the move first: check for energy, collisions with other bots, and grid boundaries.
+        Only execute move if it is safe.
+        """
+
+        #Step 1: Check if bot has enough energy
         if self.energy <= 0:
             self.log.append("[ERROR] Not enough energy to move.")
             raise ValueError("Bot is out of energy and cannot move.")
 
+        #Step 2: Save the current position (in case we need to rollback or predict)
+        old_x, old_y = self.position.x, self.position.y
+
+        #Step 3: Predict the next position without actually moving yet
+        if direction == "up":
+            new_x, new_y = old_x, old_y + 1
+        elif direction == "down":
+            new_x, new_y = old_x, old_y - 1
+        elif direction == "left":
+            new_x, new_y = old_x - 1, old_y
+        elif direction == "right":
+            new_x, new_y = old_x + 1, old_y
+        elif direction == "up-right":
+            new_x, new_y = old_x + 1, old_y + 1
+        elif direction == "up-left":
+            new_x, new_y = old_x - 1, old_y + 1
+        elif direction == "down-right":
+            new_x, new_y = old_x + 1, old_y - 1
+        elif direction == "down-left":
+            new_x, new_y = old_x - 1, old_y - 1
+        else:
+            self.log.append("[ERROR] Invalid direction.")
+            raise ValueError(f"Invalid direction: {direction}")
+
+        #Step 4: Check if the new position is already occupied by another bot
+        if self.grid.manager.is_position_occupied(new_x, new_y):
+            self.log.append(f"[ERROR] Move blocked: another bot is at ({new_x}, {new_y}).")
+            raise ValueError("Cannot move: another bot is already at that location.")
+
+        #Step 5: Actually perform the move using the Position class
         try:
+            # move.py will handle out-of-bounds rollback automatically if needed
             self.position.move(direction)
 
-            #diagonal energy loss
-            is_diagonal = "-" in direction
-            if is_diagonal:
+            #Step 6: Update energy cost (diagonal moves cost 2, straight moves cost 1)
+            if "-" in direction:
                 self.energy -= 2
             else:
                 self.energy -= 1
 
             coords = self.position.get_coords()
 
+            #Step 7: Recharge if landing on a charging station
             if self.grid.is_charging_station(coords[0], coords[1]):
                 self.energy = MAX_ENERGY
                 self.log.append(f"[RECHARGED] Recharged automatically at station {coords}.")
 
+            #Step 8: Check if goal is reached
             if coords == self.goal:
                 self.log.append(f"[GOAL] Reached target at {self.goal}!")
+                
+            
+            #Step 8.5: Check if bot captures the shared goal
+            if (
+                self.grid.manager.shared_goal and
+                not self.grid.manager.shared_goal_claimed and
+                coords == self.grid.manager.shared_goal
+            ):
+                self.grid.manager.shared_goal_claimed = True
+                self.balance += 5  # Bonus for capturing shared goal
+                self.log.append(f"[COMPETITION] Captured the shared goal at {coords}! +5 coins awarded.")
 
+
+            #Step 9: Log the successful move
             self.log.append(f"Moved {direction} to {coords}. Energy left: {self.energy}")
             return coords
 
         except ValueError as e:
+            #If move.py raised a ValueError (out of bounds, etc), log it too
             self.log.append(f"[ERROR] {str(e)}")
             raise
 
@@ -116,6 +178,16 @@ class Bot:
         self.position = Position()
         self.energy = MAX_ENERGY
         self.log = []
+        
+        
+        
+    def receive_message(self, from_bot, message):
+        """
+        Receive a message from another bot and store it in inbox.
+        """
+        entry = f"[FROM {from_bot}] {message}"
+        self.inbox.append(entry)
+        self.log.append(entry)  # Also log it for status view
 
         
         
@@ -129,15 +201,16 @@ class BotManager:
     Handles create, move, and status requests.
     """
 
-    def __init__(self):
+    def __init__(self, width=0, height=0, num_stations=5):
         # Store all bots in a dictionary with their ID as the key
         self.bots = {}
-        self.grid = Grid()  # grid object!
+        self.grid = Grid(GRID_WIDTH, GRID_HEIGHT)  #grid objects
+        self.shared_goal = None  # Track the competitive goal (x, y)
+        self.shared_goal_claimed = False  # Track if goal is captured
+        self.grid.manager = self  #tells the grid who owns it
 
-        
 
-
-    def create_bot(self, bot_id):
+    def create_bot(self, bot_id, auto_reply=False):
         """
         Make a new bot with a unique ID.
         If the ID already exists, show an error.
@@ -145,8 +218,12 @@ class BotManager:
         
         if bot_id in self.bots:
             raise ValueError(f"Bot '{bot_id}' already exists.")
-        self.bots[bot_id] = Bot(bot_id, self.grid)  # pass grid to bots!
+        
+        bot = Bot(bot_id, self.grid)
+        bot.auto_reply = auto_reply  # Set based on input
+        self.bots[bot_id] = bot   #pass grid to bots!
         return f"Bot '{bot_id}' created."
+
 
 
     def move_bot(self, bot_id, direction):
@@ -193,6 +270,18 @@ class BotManager:
         return self.bots[bot_id]
     
     
+    
+    def is_position_occupied(self, x, y):
+        """
+        Check if any bot is currently at (x, y).
+        """
+        for bot in self.bots.values():
+            if bot.position.x == x and bot.position.y == y:
+                return True
+        return False
+    
+    
+
     def recharge_bot(self, bot_id):
         """
         Recharges a bot's energy to full.
@@ -219,8 +308,56 @@ class BotManager:
         """
         direction = random.choice(DIRECTIONS)
         return self.move_bot(bot_id, direction)
+    
+    
+    
+    def send_message(self, sender_id, receiver_id, message):
+        """
+        Allow one bot to send a message to another bot.
+        """
+        if sender_id not in self.bots:
+            raise ValueError(f"Sender bot '{sender_id}' not found.")
+        if receiver_id not in self.bots:
+            raise ValueError(f"Receiver bot '{receiver_id}' not found.")
+
+        sender = self.bots[sender_id]
+        receiver = self.bots[receiver_id]
+
+        sender.outbox.append({"to": receiver_id, "message": message})
+        receiver.inbox.append({"from": sender_id, "message": message})
 
 
+
+    def get_inbox(self, bot_id):
+        """
+        Return the list of messages received by a bot.
+        """
+        return self._get_bot(bot_id).inbox
+
+    def get_outbox(self, bot_id):
+        """
+        Return the list of messages sent by a bot.
+        """
+        return self._get_bot(bot_id).outbox
+    
+    
+    
+    
+    def generate_auto_reply(self, incoming_message):
+        """
+        Use OpenAI to generate an automatic reply based on an incoming message.
+        """
+        prompt = f"A friendly bot received the message: '{incoming_message}'. How should it reply?"
+        
+        response = openai.Completion.create(
+            engine="gpt-3.5-turbo-instruct",  # will use instruct for easy one-line replies
+            prompt=prompt,
+            max_tokens=50,
+            temperature=0.7,
+        )
+        
+        reply = response["choices"][0]["text"].strip()
+        return reply
 
     
     

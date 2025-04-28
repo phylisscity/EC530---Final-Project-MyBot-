@@ -5,6 +5,7 @@ from MyBot.bot_manager import BotManager
 from MyBot.config import DIRECTIONS
 from MyBot.config import RECHARGE_COST
 from MyBot.config import GRID_WIDTH, GRID_HEIGHT
+import random
 
 
 
@@ -35,6 +36,8 @@ def create_bot():
     
     data = request.json
     bot_id = data.get("bot_id")  # Extract bot ID from incoming request
+    auto_reply = data.get("auto_reply", False)  #optional, default False
+
 
     # Check if the client sent a bot_id
     if not bot_id:
@@ -44,6 +47,7 @@ def create_bot():
         # Create the bot and return a success message
         message = manager.create_bot(bot_id)
         return jsonify({"message": message})
+    
     except ValueError as e:
         # Handle case where bot_id already exists
         return jsonify({"error": str(e)}), 400
@@ -279,3 +283,123 @@ def get_goal(bot_id):
         })
     except ValueError as e:
         return jsonify({"error": str(e)}), 404
+
+
+
+
+#create shared goal
+@bp.route("/create_shared_goal", methods=["POST"])
+def create_shared_goal():
+    """
+    Set a new shared competitive goal for all bots to race toward.
+    """
+    manager.shared_goal = (
+        random.randint(0, GRID_WIDTH - 1),
+        random.randint(0, GRID_HEIGHT - 1)
+    )
+    manager.shared_goal_claimed = False
+    return jsonify({"shared_goal": manager.shared_goal})
+
+
+
+#get/view shared goal
+@bp.route("/shared_goal", methods=["GET"])
+def get_shared_goal():
+    """
+    Get the current shared competitive goal.
+    """
+    if manager.shared_goal and not manager.shared_goal_claimed:
+        return jsonify({"shared_goal": manager.shared_goal})
+    else:
+        return jsonify({"message": "No active shared goal."})
+
+
+#messaging
+@bp.route("/send_message/<sender_id>/<receiver_id>", methods=["POST"])
+def send_message(sender_id, receiver_id):
+    """
+    API endpoint for a bot to send a message to another bot.
+    """
+    try:
+        data = request.get_json()
+        message = data.get("message")
+
+        if not message:
+            return jsonify({"error": "Missing 'message' in request body."}), 400
+
+        manager.send_message(sender_id, receiver_id, message)
+        receiver = manager._get_bot(receiver_id)
+
+                
+        if receiver.auto_reply:
+            auto_reply = manager.generate_auto_reply(message)
+            manager.send_message(receiver_id, sender_id, auto_reply)
+                
+                
+        return jsonify({
+            "message": "Message sent successfully.",
+            "from": sender_id,
+            "to": receiver_id,
+            "content": message
+        })
+
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+
+
+
+
+# inbox
+@bp.route("/inbox/<bot_id>", methods=["GET"])
+def get_inbox(bot_id):
+    """
+    API endpoint to get a bot's inbox (received messages).
+    """
+    try:
+        inbox = manager.get_inbox(bot_id)
+        return jsonify({"bot_id": bot_id, "inbox": inbox})
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
+
+
+
+# outbox
+@bp.route("/outbox/<bot_id>", methods=["GET"])
+def get_outbox(bot_id):
+    """
+    API endpoint to get a bot's outbox (sent messages).
+    """
+    try:
+        outbox = manager.get_outbox(bot_id)
+        return jsonify({"bot_id": bot_id, "outbox": outbox})
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
+
+
+
+#resizing grids
+@bp.route("/resize_grid", methods=["POST"])
+def resize_grid():
+    """
+    Resize the grid dynamically.
+
+    Expects JSON body with:
+    {
+        "width": int,
+        "height": int,
+        "num_stations": int (optional, defaults to 5)
+    }
+    """
+    
+    data = request.get_json()
+    width = data.get("width")
+    height = data.get("height")
+    num_stations = data.get("num_stations", 5)
+
+    if width is None or height is None:
+        return jsonify({"error": "Missing width or height"}), 400
+
+    manager.grid.resize(width, height, num_stations)
+    return jsonify({
+        "message": f"Grid resized to {width}x{height} with {num_stations} charging stations."
+    })
