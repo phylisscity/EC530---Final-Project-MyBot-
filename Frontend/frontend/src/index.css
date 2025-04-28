@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ----------------------------------------------
+🌱 Basic Body Styling (Grass + Flowers)
+------------------------------------------------ */
+
+
+body {
+
+  background-color: #a3d977; /* Base grassy green */
+
+  background-image: 
+    radial-gradient(circle at 5px 5px, #7dbf50 1px, transparent 0),   /* dark green speck */
+    radial-gradient(circle at 15px 10px, #ffffff 2px, transparent 0), /* white flowers */
+    radial-gradient(circle at 25px 20px, #ffb6b9 1.5px, transparent 0), /* pink flowers */
+    radial-gradient(circle at 35px 30px, #fff176 2px, transparent 0), /* yellow flowers */
+    radial-gradient(circle at 45px 40px, #d1c4e9 1.5px, transparent 0); /* purple flowers */
+    
+  background-size: 100px 100px; /* Size of pattern grid */
+  background-repeat: repeat;    /* Repeat across entire background */
+
+}
