@@ -374,3 +374,32 @@ def get_outbox(bot_id):
         return jsonify({"bot_id": bot_id, "outbox": outbox})
     except ValueError as e:
         return jsonify({"error": str(e)}), 404
+
+
+
+#resizing grids
+@bp.route("/resize_grid", methods=["POST"])
+def resize_grid():
+    """
+    Resize the grid dynamically.
+
+    Expects JSON body with:
+    {
+        "width": int,
+        "height": int,
+        "num_stations": int (optional, defaults to 5)
+    }
+    """
+    
+    data = request.get_json()
+    width = data.get("width")
+    height = data.get("height")
+    num_stations = data.get("num_stations", 5)
+
+    if width is None or height is None:
+        return jsonify({"error": "Missing width or height"}), 400
+
+    manager.grid.resize(width, height, num_stations)
+    return jsonify({
+        "message": f"Grid resized to {width}x{height} with {num_stations} charging stations."
+    })

@@ -15,7 +15,7 @@ class Grid:
     Represents the virtual world grid and special locations (like charging stations).
     """
     
-    def __init__(self, width=10, height=10, num_stations=5):
+    def __init__(self, width, height, num_stations=5):
         
         """
         Initialize grid dimensions and randomly place charging stations.
