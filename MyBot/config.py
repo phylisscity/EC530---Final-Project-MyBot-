@@ -1,3 +1,6 @@
+import openai
+import os
+
 """
 Configuration file for MyBot System.
 
@@ -5,6 +8,7 @@ Contains constants for grid size, bot settings, energy management,
 and movement options. Centralized here for easy maintenance and scaling.
 """
 
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 
 # Constants for grid size

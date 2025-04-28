@@ -36,6 +36,8 @@ def create_bot():
     
     data = request.json
     bot_id = data.get("bot_id")  # Extract bot ID from incoming request
+    auto_reply = data.get("auto_reply", False)  #optional, default False
+
 
     # Check if the client sent a bot_id
     if not bot_id:
@@ -45,6 +47,7 @@ def create_bot():
         # Create the bot and return a success message
         message = manager.create_bot(bot_id)
         return jsonify({"message": message})
+    
     except ValueError as e:
         # Handle case where bot_id already exists
         return jsonify({"error": str(e)}), 400
@@ -325,7 +328,14 @@ def send_message(sender_id, receiver_id):
             return jsonify({"error": "Missing 'message' in request body."}), 400
 
         manager.send_message(sender_id, receiver_id, message)
-        
+        receiver = manager._get_bot(receiver_id)
+
+                
+        if receiver.auto_reply:
+            auto_reply = manager.generate_auto_reply(message)
+            manager.send_message(receiver_id, sender_id, auto_reply)
+                
+                
         return jsonify({
             "message": "Message sent successfully.",
             "from": sender_id,

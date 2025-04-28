@@ -2,6 +2,11 @@ from MyBot.world.grid import Grid
 from MyBot.movement.move import Position
 from MyBot.config import MAX_ENERGY, DIRECTIONS, RECHARGE_COST, GRID_WIDTH, GRID_HEIGHT
 import random
+import openai
+from MyBot.config import OPENAI_API_KEY
+
+
+openai.api_key = OPENAI_API_KEY
 
 
 
@@ -29,6 +34,9 @@ class Bot:
 
         self.inbox = []   # List of received messages   
         self.outbox = []  # List of sent messages
+        
+        self.auto_reply = False  # default: bots don't auto-reply unless told to
+
 
 
         #adding energy levels --more features
@@ -202,10 +210,7 @@ class BotManager:
         self.grid.manager = self  #tells the grid who owns it
 
 
-        
-
-
-    def create_bot(self, bot_id):
+    def create_bot(self, bot_id, auto_reply=False):
         """
         Make a new bot with a unique ID.
         If the ID already exists, show an error.
@@ -213,8 +218,12 @@ class BotManager:
         
         if bot_id in self.bots:
             raise ValueError(f"Bot '{bot_id}' already exists.")
-        self.bots[bot_id] = Bot(bot_id, self.grid)  # pass grid to bots!
+        
+        bot = Bot(bot_id, self.grid)
+        bot.auto_reply = auto_reply  # Set based on input
+        self.bots[bot_id] = bot   #pass grid to bots!
         return f"Bot '{bot_id}' created."
+
 
 
     def move_bot(self, bot_id, direction):
@@ -330,6 +339,25 @@ class BotManager:
         Return the list of messages sent by a bot.
         """
         return self._get_bot(bot_id).outbox
+    
+    
+    
+    
+    def generate_auto_reply(self, incoming_message):
+        """
+        Use OpenAI to generate an automatic reply based on an incoming message.
+        """
+        prompt = f"A friendly bot received the message: '{incoming_message}'. How should it reply?"
+        
+        response = openai.Completion.create(
+            engine="gpt-3.5-turbo-instruct",  # will use instruct for easy one-line replies
+            prompt=prompt,
+            max_tokens=50,
+            temperature=0.7,
+        )
+        
+        reply = response["choices"][0]["text"].strip()
+        return reply
 
     
     
