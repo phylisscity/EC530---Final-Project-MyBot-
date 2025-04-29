@@ -21,13 +21,25 @@ function App() {
         MyBot World 🌱🤖
       </h1>
 
+
       {/* World grid (background cells) */}
-      <Grid />
+      {/* Custom golden grid frame with corner brackets */}
+      <div className="relative bracket-frame p-[10px] bg-gradient-to-br from-pink-200 via-purple-400 to-yellow-500 border-[12px] border-yellow-400 rounded-[36px] shadow-[0_8px_30px_rgba(0,0,0,0.2)] mt-6">
+        
+        {/* Inner grid area with soft background and blur */}
+        <div className="bg-gradient-to-br from-[#edefec] to-[#f7f1d4] rounded-[30px] p-5 shadow-inner backdrop-blur-sm">
+          <Grid />
+        </div>
+
+      </div>
+
+
+
 
 
       {/* Bots (floating below for now - will move inside the grid later) */}
       <div className="flex flex-wrap justify-center gap-6 mt-12">
-        
+
         {bots.map((bot, index) => (
           <Bot
             key={index}

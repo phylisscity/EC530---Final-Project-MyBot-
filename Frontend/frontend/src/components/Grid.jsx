@@ -17,11 +17,13 @@ function Grid() {
       cells.push(
 
         <div
-          key={`${row}-${col}`} // Unique key for each cell
-          className="border border-blue-800 bg-white/20 w-16 h-16 flex items-center justify-center"
-          >
-          {/* Empty for now — bots will be placed here later */}
+        key={`${row}-${col}`}
+        className="border border-blue-400 bg-white/20 w-16 h-16 flex items-center justify-center rounded-md 
+                    hover:shadow-lg hover:scale-110 transition-all duration-200 ease-in-out"
+        >
+        {/* Bot will be inserted here later */}
         </div>
+
       );
     }
   }
