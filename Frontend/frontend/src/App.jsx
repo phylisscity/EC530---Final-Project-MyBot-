@@ -1,11 +1,12 @@
-// Main App component to display all bots
+//Main application layout for MyBot World
 import React from 'react';
-import BotCard from './components/BotCard';
+import Grid from './components/Grid';   
+import Bot from './components/Bot';     
+
 
 function App() {
 
   // Temporary list of bots (mock data for now)
-
   const bots = [
     { botName: 'Bot #1', energy: 8, balance: 12, emoji: '🤖' },
     { botName: 'Bot #2', energy: 5, balance: 7, emoji: '🛸' },
@@ -14,17 +15,19 @@ function App() {
 
   return (
     <div className="min-h-screen p-8 flex flex-col items-center">
-
+      
       {/* Main heading */}
-      <h1 className="text-7xl font-bold text-gray-800 mb-10">
+      <h1 className="text-4xl font-bold text-gray-800 mb-10">
         MyBot World 🌱🤖
       </h1>
 
-      {/* Bots grid */}
-      <div className="flex flex-wrap justify-center gap-4">
+      {/* World grid */}
+      <Grid />
+
+      {/* Bots shown below for now (later will move them INTO the grid) */}
+      <div className="flex flex-wrap justify-center gap-4 mt-10">
         {bots.map((bot, index) => (
-          
-          <BotCard
+          <Bot
             key={index}
             botName={bot.botName}
             energy={bot.energy}
@@ -33,6 +36,7 @@ function App() {
           />
         ))}
       </div>
+
     </div>
   );
 }
