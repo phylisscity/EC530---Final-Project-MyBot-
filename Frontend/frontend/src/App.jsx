@@ -3,6 +3,7 @@ import React, { useState } from 'react'; // updated. Need useState for sidebar c
 import Grid from './components/Grid'; // Grid layout
 import Bot from './components/Bot';   // Bot component
 import Sidebar from './components/Sidebar';  //sidebar for menu
+import BotControlPanel from './components/ControlPanel'; // ✅ Floating action panel
 
 
 function App() {
@@ -25,8 +26,8 @@ function App() {
       {!isMenuOpen && (
       <button 
         onClick={() => setIsMenuOpen(true)} 
-        className="fixed top-6 left-6 text-3xl z-50 bg-white/70 p-2 rounded-full shadow-md hover:bg-white transition"
-      >
+        className="fixed top-6 left-6 text-4xl z-50 bg-white/70 p-3 rounded-full shadow-md hover:bg-white transition hover:scale-110 active:scale-90 duration-200 ease-in-out"
+        >
         ☰
       </button>
     )}
@@ -69,6 +70,38 @@ function App() {
           />
         ))}
       </div>
+
+
+
+
+      {/* Floating Control Panel for Bot Actions */}
+      <BotControlPanel 
+        onCreateBot={() => console.log("Create Bot Clicked!")}
+        onMoveRandom={() => console.log("Move Random Clicked!")}
+        onRecharge={() => console.log("Recharge Clicked!")}
+        onMessage={() => console.log("Message Clicked!")}
+      />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     </div>
   );
