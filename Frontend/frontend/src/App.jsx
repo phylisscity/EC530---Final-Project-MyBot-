@@ -4,6 +4,8 @@ import Grid from './components/Grid'; // Grid layout
 import Bot from './components/Bot';   // Bot component
 import Sidebar from './components/Sidebar';  // Sidebar for menu
 import BotControlPanel from './components/ControlPanel'; // Floating action panel
+import FloatingIcons from './components/FloatingIcons';
+
 
 
 function App() {
@@ -119,7 +121,8 @@ function App() {
 
 
 
-
+    // floating icons
+    <FloatingIcons />
 
 
 
