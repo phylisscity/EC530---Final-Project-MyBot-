@@ -2,34 +2,33 @@
 import React from 'react';
 
 
-function Bot({ botName, energy, balance, emoji }) {
+function Bot({ botName, emoji, energy, balance }) {
 
   return (
 
-    <div className="bg-white/60 backdrop-blur-lg rounded-xl shadow-md p-4 m-2 flex flex-col items-center w-40">
-     
-      {/* Bot emoji */}
+    // Outer container with relative positioning for floating bubble
+    <div className="relative flex flex-col items-center m-4">
+
+
+      {/* Floating stat bubble above bot */}
+      <div className="absolute -top-8 bg-white/70 text-green-900 rounded-full px-4 py-2 text-sm shadow-lg whitespace-nowrap">
+       
+        {/* Show energy and balance side by side */}
+        ⚡ {energy} | 💰 {balance}
+      </div>
+
+      {/* Bot emoji (big and centered) */}
       <div className="text-7xl mb-2">
         {emoji}
       </div>
 
+      {/* Bot name below emoji */}
+      <h2 className="text-base font-semibold text-gray-800 mt-1">
+        {botName}
+      </h2>
 
-      {/* Bot's name */}
-      <h2 className="text-lg font-bold mb-1">{botName}</h2>
-
-
-      {/* Bot's energy and balance */}
-      <p className="text-sm">⚡ {energy} | 💰 {balance}</p>
-
-
-      {/* Move button (will add functionality later) */}
-      <button className="mt-3 bg-green-400 hover:bg-green-500 text-white font-bold py-1 px-3 rounded">
-        Move
-      </button>
     </div>
-    
   );
-
 }
 
 export default Bot;
