@@ -1,15 +1,16 @@
-//Main application layout for MyBot World 🌱🤖
+// Main application layout for MyBot World
 import React, { useState } from 'react'; // updated. Need useState for sidebar control
 import Grid from './components/Grid'; // Grid layout
 import Bot from './components/Bot';   // Bot component
-import Sidebar from './components/Sidebar';  //sidebar for menu
-import BotControlPanel from './components/ControlPanel'; // ✅ Floating action panel
+import Sidebar from './components/Sidebar';  // Sidebar for menu
+import BotControlPanel from './components/ControlPanel'; // Floating action panel
 
 
 function App() {
 
   // Menu open/close control
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
 
   // List of bots (fake data for now - will connect to backend later)
   const bots = [
@@ -18,47 +19,79 @@ function App() {
     { botName: 'Bot #3', energy: 10, balance: 15, emoji: '🐝' },
   ];
 
-
   return (
     <div className="min-h-screen p-8 flex flex-col items-center">
 
-      {/* Hamburger Menu Button */}
-      {!isMenuOpen && (
-      <button 
-        onClick={() => setIsMenuOpen(true)} 
-        className="fixed top-6 left-6 text-4xl z-50 bg-white/70 p-3 rounded-full shadow-md hover:bg-white transition hover:scale-110 active:scale-90 duration-200 ease-in-out"
-        >
-        ☰
-      </button>
-    )}
+            
+      {/* ===== Top Navbar ===== */}
+      <div className="w-full relative bg-white/70 backdrop-blur-md rounded-3xl p-4 shadow-md mb-8 animate-fade-in-bounce flex items-center justify-between">
+
+        {/* Hamburger - Left Side */}
+        {!isMenuOpen && (
+          <button 
+            onClick={() => setIsMenuOpen(true)} 
+            className="text-4xl z-50 bg-white/70 p-3 rounded-full shadow-md hover:bg-white transition hover:scale-110 active:scale-90 duration-200 ease-in-out"
+          >
+            ☰
+          </button>
+        )}
+
+        {/* Center Title - Always Centered */}
+        <div className="absolute left-1/2 transform -translate-x-1/2">
+          <h1 className="text-3xl font-bold text-gray-800">
+            MyBot World 🌱🤖
+          </h1>
+        </div>
+
+        {/* Right-side Stats */}
+        <div className="flex items-center space-x-6 ml-auto">
+
+          {/* Bot Count */}
+          <div className="flex flex-col items-center hover:scale-110 transition">
+            <span className="text-lg font-semibold">Bots</span>
+            <span className="text-xl font-bold">3</span> {/* Replace later */}
+          </div>
+
+          {/* Coin Count */}
+          <div className="flex flex-col items-center hover:scale-110 transition">
+            <span className="text-lg font-semibold">Coins</span>
+            <span className="text-xl font-bold">15</span> {/* Replace later */}
+          </div>
+
+          {/* Mood */}
+          <div className="flex flex-col items-center hover:scale-110 transition">
+            <span className="text-lg font-semibold">Mood</span>
+            <span className="text-xl">🌤️</span> {/* Replace with mood state */}
+          </div>
+
+        </div>
+      </div>
+      {/* ===== End Top Navbar ===== */}
 
 
 
-      {/* Sidebar component (slide-in menu) */}
+
+      {/* ===== Sidebar Slide-in Menu ===== */}
       <Sidebar isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+      {/* ===== End Sidebar ===== */}
 
 
-      {/* Main title */}
-      <h1 className="text-4xl font-bold text-gray-800 mb-10">
-        MyBot World 🌱🤖
-      </h1>
-
-
-      {/* World grid (background cells) */}
-      {/* Custom golden grid frame with corner brackets */}
+  
+      {/* ===== World Grid ===== */}
       <div className="relative bracket-frame p-[10px] bg-gradient-to-br from-pink-200 via-purple-400 to-yellow-500 border-[12px] border-yellow-400 rounded-[36px] shadow-[0_8px_30px_rgba(0,0,0,0.2)] mt-6">
 
-
-        {/* Inner grid area with soft background and blur */}
+        {/* Inner Grid Area */}
         <div className="bg-gradient-to-br from-[#edefec] to-[#f7f1d4] rounded-[30px] p-5 shadow-inner backdrop-blur-sm">
           <Grid />
         </div>
 
       </div>
+      {/* ===== End World Grid ===== */}
 
 
 
-      {/* Bots (floating below for now - will move inside the grid later) */}
+
+      {/* ===== Bots Floating Below ===== */}
       <div className="flex flex-wrap justify-center gap-6 mt-12">
         {bots.map((bot, index) => (
           <Bot
@@ -70,31 +103,19 @@ function App() {
           />
         ))}
       </div>
+      {/* ===== End Bots Floating ===== */}
 
 
 
 
-      {/* Floating Control Panel for Bot Actions */}
+      {/* ===== Floating Bot Control Panel ===== */}
       <BotControlPanel 
         onCreateBot={() => console.log("Create Bot Clicked!")}
         onMoveRandom={() => console.log("Move Random Clicked!")}
         onRecharge={() => console.log("Recharge Clicked!")}
         onMessage={() => console.log("Message Clicked!")}
       />
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+      {/* ===== End Control Panel ===== */}
 
 
 
@@ -106,6 +127,5 @@ function App() {
     </div>
   );
 }
-
 
 export default App;
