@@ -2,15 +2,13 @@
 import React, { useState } from 'react'; // updated. Need useState for sidebar control
 import Grid from './components/Grid'; // Grid layout
 import Bot from './components/Bot';   // Bot component
-import Sidebar from './components/Sidebar';  // Sidebar for menu
-import BotControlPanel from './components/ControlPanel'; // Floating action panel
-import FloatingIcons from './components/FloatingIcons';
+import BotUIHub from './components/BotUIHub';
 
 
 
 function App() {
 
-  // Menu open/close control
+  // sidebar open/close control
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
 
@@ -20,6 +18,16 @@ function App() {
     { botName: 'Bot #2', energy: 5, balance: 7, emoji: '🛸' },
     { botName: 'Bot #3', energy: 10, balance: 15, emoji: '🐝' },
   ];
+
+
+  
+  // === Control Logic for Unified Panel (placeholder)
+  const handleCreateBot = () => console.log("Create Bot Clicked!");
+  const handleMoveRandom = () => console.log("Move Random Clicked!");
+  const handleRecharge = () => console.log("Recharge Clicked!");
+  const handleMessage = () => console.log("Message Clicked!");
+
+
 
   return (
     <div className="min-h-screen p-8 flex flex-col items-center">
@@ -44,6 +52,8 @@ function App() {
             MyBot World 🌱🤖
           </h1>
         </div>
+
+
 
         {/* Right-side Stats */}
         <div className="flex items-center space-x-6 ml-auto">
@@ -73,15 +83,10 @@ function App() {
 
 
 
-      {/* ===== Sidebar Slide-in Menu ===== */}
-      <Sidebar isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
-      {/* ===== End Sidebar ===== */}
 
-
-  
       {/* ===== World Grid ===== */}
       <div className="relative bracket-frame p-[10px] bg-gradient-to-br from-pink-200 via-purple-400 to-yellow-500 border-[12px] border-yellow-400 rounded-[36px] shadow-[0_8px_30px_rgba(0,0,0,0.2)] mt-6">
-
+      
         {/* Inner Grid Area */}
         <div className="bg-gradient-to-br from-[#edefec] to-[#f7f1d4] rounded-[30px] p-5 shadow-inner backdrop-blur-sm">
           <Grid />
@@ -110,20 +115,15 @@ function App() {
 
 
 
-      {/* ===== Floating Bot Control Panel ===== */}
-      <BotControlPanel 
-        onCreateBot={() => console.log("Create Bot Clicked!")}
-        onMoveRandom={() => console.log("Move Random Clicked!")}
-        onRecharge={() => console.log("Recharge Clicked!")}
-        onMessage={() => console.log("Message Clicked!")}
+      {/* ===== Unified Bot Control Panel (Sidebar + FloatingIcons) ======*/}
+      <BotUIHub
+        isOpen={isMenuOpen}
+        onClose={() => setIsMenuOpen(false)}
+        onCreateBot={handleCreateBot}
+        onMoveRandom={handleMoveRandom}
+        onRecharge={handleRecharge}
+        onMessage={handleMessage}
       />
-      {/* ===== End Control Panel ===== */}
-
-
-
-    // floating icons
-    <FloatingIcons />
-
 
 
 
