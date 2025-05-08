@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ----------------------------------------------
+🌱 Basic Body Styling (Grass + Flowers)
+------------------------------------------------ */
+
+
+body {
+
+  background-color: #a3d977; /* Base grassy green */
+
+  background-image: 
+    radial-gradient(circle at 5px 5px, #7dbf50 1px, transparent 0),   /* dark green speck */
+    radial-gradient(circle at 15px 10px, #ffffff 2px, transparent 0), /* white flowers */
+    radial-gradient(circle at 25px 20px, #ffb6b9 1.5px, transparent 0), /* pink flowers */
+    radial-gradient(circle at 35px 30px, #fff176 2px, transparent 0), /* yellow flowers */
+    radial-gradient(circle at 45px 40px, #d1c4e9 1.5px, transparent 0); /* purple flowers */
+    
+  background-size: 100px 100px; /* Size of pattern grid */
+  background-repeat: repeat;    /* Repeat across entire background */
+
+
+}
+
+
+/*for control panel*/
+@keyframes fadeInBounce {
+  0% {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+  }
+  60% {
+    transform: translateY(-10px) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-fade-in-bounce {
+  animation: fadeInBounce 0.6s ease-out both;
+}
+
+
+
+/*for floating icons*/
+@keyframes drift {
+  0% {
+    transform: translateY(100vh) scale(1);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(-10vh) scale(1.5);
+    opacity: 0;
+  }
+}
+
+.animate-drift {
+  animation: drift 10s linear forwards;
+}
+
+
+
+
+
+/* === Mini Map Overlay === */
+.mini-map-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.mini-title {
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 4px;
+  color: #444;
+}
+
+.mini-grid {
+  display: grid;
+  grid-template-rows: repeat(12, 1fr);
+  gap: 2px;
+}
+
+.mini-row {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 2px;
+}
+
+.mini-cell {
+  width: 8px;
+  height: 8px;
+  font-size: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
