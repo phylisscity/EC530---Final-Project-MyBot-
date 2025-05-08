@@ -66,7 +66,7 @@ Frontend/
 
 ## 🖼️ Interface Preview
 
-![MyBot World UI](./public/goal_frontend.png)
+![MyBot World UI](./public/goalfrontend.png)
 
 ---
 
